@@ -5,6 +5,7 @@
 	<artifactId>JfreechartTuto</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
+<!-- test -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk>1.7</jdk>
