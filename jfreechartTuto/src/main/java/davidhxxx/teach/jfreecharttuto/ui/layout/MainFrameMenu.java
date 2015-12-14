@@ -12,19 +12,31 @@ public class MainFrameMenu extends JMenuBar {
 
     private JMenu optionsMenu = new JMenu("Options");
     private JMenu stockMenu = new JMenu("Stock");
+    private JMenu interrogationPointMenu = new JMenu("?");
 
     // Option
     private JMenuItem optionTelechargerCoursItem = new JMenuItem("Mettre à jour les cours");
 
+    // Stock
+    private JMenuItem stockOpenQuotationsDirItem = new JMenuItem("Ouvrir le répertoire des quotations de la valeur");
+    private JMenuItem stockCopyIsinInClipboardItem = new JMenuItem("Copier le code isin dans le presse-papier");
+    private JMenuItem stockCopyStockNameInClipboardItem = new JMenuItem("Copier le libelle du stock dans le presse-papier");
+
     public MainFrameMenu() {
 
-	// added menu items in Fichier
+	// add menu items in Fichier
 	optionsMenu.add(optionTelechargerCoursItem);
 	optionsMenu.add(optionTelechargerCoursItem);
+
+	// add menu items in Fichier
+	stockMenu.add(stockCopyStockNameInClipboardItem);
+	stockMenu.add(stockCopyIsinInClipboardItem);
+	stockMenu.add(stockOpenQuotationsDirItem);
 
 	// add menu bar
 	add(optionsMenu);
 	add(stockMenu);
+	add(interrogationPointMenu);
 
 	addListenerInFichierMenu();
     }
@@ -34,16 +46,6 @@ public class MainFrameMenu extends JMenuBar {
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		// File myFile = ApplicationDirs.BASE_DIR_FILE;
-		// if (Desktop.isDesktopSupported()) {
-		// try {
-		// Desktop.getDesktop().open(myFile);
-		// }
-		// catch (IOException e1) {
-		// e1.printStackTrace();
-		// throw new IllegalArgumentException();
-		// }
-		// }
 	    }
 	});
 
