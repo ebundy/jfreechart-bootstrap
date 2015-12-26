@@ -43,7 +43,7 @@ public class LocalQuoteService {
 
     private static Logger LOGGER = LoggerFactory.getLogger(LocalQuoteService.class);
 
-    private LocalQuoteService() {
+    private  LocalQuoteService() {
     }
 
     private static class LazyHolder {
