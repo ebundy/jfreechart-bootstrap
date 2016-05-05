@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.TreeMap;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.supercsv.cellprocessor.ParseLong;
@@ -39,33 +40,32 @@ public class QuotationsConvertorService {
     public TreeMap<Stock, QuotationsToImport> convertFromMyProviderToQuotations(List<QuoteFileInformation> quoteFileInformations) {
 
 	TreeMap<Stock, QuotationsToImport> quotationsByIsin1 = new TreeMap<>();
-	
+
 	CsvBeanReader mapReader = null;
-	
+
 	CellProcessor[] processors = null;
 	String[] header = null;
 	CsvPreference csvPreference = null;
-	
+
 	// my format
 	processors = getMyProviderStockProcessors();
 	header = new String[] { "isin", "date", "open", "high", "low", "close", "volume" };
 	csvPreference = ApplicationDirs.getCsvPreference(ApplicationDirs.MY_CVS_PREFERENCE);
-	
+
 	Stock stock = null;
 	for (QuoteFileInformation quoteFileInformation : quoteFileInformations) {
-	
+
 	    File file = new File(quoteFileInformation.getFilePath());
+	    
 	    try {
-	
 		mapReader = new CsvBeanReader(new FileReader(file), csvPreference);
-	
+
 		Quotation q;
 		while ((q = mapReader.read(Quotation.class, header, processors)) != null) {
-	
-	
+
 		    if (stock == null || (q.getIsin() != null && !q.getIsin().equals(stock.getIsin()))) {
 			stock = LocalListService.getInstance().findStock(q.getIsin());
-	
+
 			if (stock == null) {
 			    continue;
 			}
@@ -75,17 +75,17 @@ public class QuotationsConvertorService {
 			quotations = new QuotationsToImport();
 			quotationsByIsin1.put(stock, quotations);
 		    }
-	
+
 		    quotations.addSingleQuotationIfNotDateExit(q);
 		}
-	
 	    }
-	
+
 	    catch (Exception e) {
 		String msg = "Erreur lors de la conversion pour le fichier " + file;
 		LOGGER.error(msg, e);
 		throw new IllegalArgumentException(msg, e);
 	    }
+
 	    finally {
 		if (mapReader != null) {
 		    try {

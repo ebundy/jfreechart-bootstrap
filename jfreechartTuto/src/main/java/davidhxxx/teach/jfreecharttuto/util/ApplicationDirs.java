@@ -41,6 +41,8 @@ public class ApplicationDirs {
     public static final String BASE_DIR;
 
     public static final File QUOTATIONS_DIR = new File(ApplicationDirs.BASE_DIR + "/quotes/");
+    
+    public static final File QUOTATIONS_TO_IMPORT_DIR = new File(ApplicationDirs.BASE_DIR + "/quotes-to-import/");
 
     public static CsvPreference getCsvPreference(CsvPreference csvPreference) {
 	return new CsvPreference.Builder(csvPreference).skipComments(new CommentStartsWith("#")).surroundingSpacesNeedQuotes(true).build();

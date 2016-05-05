@@ -67,6 +67,7 @@ public class LocalQuoteService {
     }
 
     public void saveQuotationForAllStocks(Map<Stock, QuotationsToImport> quotationsByIsin) {
+	
 	for (Entry<Stock, QuotationsToImport> entry : quotationsByIsin.entrySet()) {
 	    Stock stock = entry.getKey();
 	    QuotationsToImport quotations = entry.getValue();

@@ -85,7 +85,6 @@ public class LocalListService {
 
     private String[] headersAvecTicker = new String[] { "isin", "name", "ticker" };
 
-
     private LocalListService() {
 	setListsPath(new File(ApplicationDirs.BASE_DIR + "/list"));
 	loadListOfStockListNames();
@@ -95,7 +94,7 @@ public class LocalListService {
 	this.listsPath = path;
 	listsPath.mkdirs();
     }
-  
+
     public static LocalListService getInstance() {
 	if (instance == null)
 	    instance = new LocalListService();
@@ -108,29 +107,27 @@ public class LocalListService {
     }
 
     public Stock findStock(String listName, String isin) {
-  	if (!listOfStockList.isLoaded(listName))
-  	    loadStockList(listName);
+	if (!listOfStockList.isLoaded(listName))
+	    loadStockList(listName);
 
-  	return listOfStockList.getStock(listName, isin);
-      }
+	return listOfStockList.getStock(listName, isin);
+    }
 
-      public Stock findStock(String isin) {
-  	
-  	for (String name : listOfStockList.getNames()) {
-  	    Stock stock = findStock(name, isin);
+    public Stock findStock(String isin) {
 
-  	    if (stock != null) {
-  		return stock;
-  	    }
-  	}
-  	return null;
-      }
-      
+	for (String name : listOfStockList.getNames()) {
+	    Stock stock = findStock(name, isin);
+
+	    if (stock != null) {
+		return stock;
+	    }
+	}
+	return null;
+    }
+
     public List<Stock> loadStockList(String listName) {
 	return loadStockListCommon(listName, false);
     }
-    
-    
 
     private List<Stock> loadStockListCommon(String listName, boolean isNotListSearch) {
 
@@ -216,7 +213,6 @@ public class LocalListService {
 	return listOfStockList.getStocks(listName);
     }
 
-
     private CellProcessor[] getStockListProcessorsWithTicker() {
 
 	final CellProcessor[] processors = new CellProcessor[] { new UniqueHashCode(), new NotNull(), new Optional() };
@@ -240,7 +236,5 @@ public class LocalListService {
 	listOfStockList.addListNames(files);
 
     }
-
-  
 
 }
