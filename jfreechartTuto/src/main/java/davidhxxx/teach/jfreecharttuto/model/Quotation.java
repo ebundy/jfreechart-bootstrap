@@ -6,6 +6,11 @@ import org.joda.time.LocalDate;
 
 public class Quotation {
 
+    @Override
+    public String toString() {
+	return "Quotation [isin=" + isin + ", date=" + date + ", open=" + open + ", high=" + high + ", low=" + low + ", close=" + close + ", volume=" + volume + "]";
+    }
+
     public static class Builder {
 
 	private String isin;

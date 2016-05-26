@@ -7,10 +7,14 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.net.URL;
 
 import java.util.List;
 import java.util.Locale;
 
+import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -20,6 +24,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.JToolBar.Separator;
+import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -36,9 +41,11 @@ import davidhxxx.teach.jfreecharttuto.model.DateInterval;
 import davidhxxx.teach.jfreecharttuto.model.Stock;
 import davidhxxx.teach.jfreecharttuto.model.StockLoaded;
 import davidhxxx.teach.jfreecharttuto.ui.draw.MyChartPanel;
+import davidhxxx.teach.jfreecharttuto.ui.listener.DrawFlexibleLineChartMouseListener;
 import davidhxxx.teach.jfreecharttuto.ui.stockselection.StockSelectionChangedListener;
 import davidhxxx.teach.jfreecharttuto.ui.stockselection.StockSelectorDialog;
 import davidhxxx.teach.jfreecharttuto.util.DateUtil;
+import davidhxxx.teach.jfreecharttuto.util.WidgetUtil;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame implements StockSelectionChangedListener {
@@ -62,6 +69,15 @@ public class MainFrame extends JFrame implements StockSelectionChangedListener {
     private JToolBar toolBar;
 
     private JScrollPane scrollPaneForReferenceChart;
+
+    private ActionListener addFlexibleLineAction;
+
+    private MyChartPanel myChartPanel;
+
+    // buttons actions
+    private JButton addFlexibleLineBtn;
+
+    private Stock stockSelected;
 
     public static void main(String[] args) {
 	try {
@@ -95,12 +111,30 @@ public class MainFrame extends JFrame implements StockSelectionChangedListener {
 	add(hSplitPaneGeneral, BorderLayout.CENTER);
 
 	initToolBar();
+	initGlobalListener();
 	selectStockDialog = StockSelectorDialog.createWithValidationAuto(this, false, comboListOfStockList.getSelectedItem().toString());
 	initDateListener();
 	createScrollPaneForChart();
 	hSplitPaneGeneral.setLeftComponent(toolBar);
 	hSplitPaneGeneral.setRightComponent(scrollPaneForReferenceChart);
 	setExtendedState(Frame.MAXIMIZED_BOTH);
+    }
+
+    private void initGlobalListener() {
+	// no action
+	// select indicateur
+	KeyStroke keyNoAction = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyNoAction, "no_action");
+
+	getRootPane().getActionMap().put("no_action", new AbstractAction() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		myChartPanel.getWorkingDraws().clearWorkingState();
+
+	    }
+	});
+
     }
 
     @Override
@@ -118,6 +152,7 @@ public class MainFrame extends JFrame implements StockSelectionChangedListener {
 
 	try {
 	    loadMyChartPanel(stockSelected);
+	    this.stockSelected = stockSelected;
 	}
 	catch (Throwable e) {
 	    new ErrorDialog("ERREUR (globale) lors de la sélection d'une nouvelle valeur.", "StockSelected=" + stockSelected, e);
@@ -148,8 +183,27 @@ public class MainFrame extends JFrame implements StockSelectionChangedListener {
 	if (endDate != null && endDate.isBefore(beginDate)) {
 	    dateDebut.setDate(endDate.minusMonths(3).toDate());
 	}
+
+	redrawChartPanel(beginDate, endDate);
     }
 
+    public void redrawChartPanel(LocalDate beginDate, LocalDate endDate) {
+
+	DateInterval periodLoaded = new DateInterval(beginDate, endDate);
+
+	StockLoaded stockLoaded = LocalQuoteService.getInstance().loadStockForChartPanel(comboListOfStockList.getSelectedItem().toString(), stockSelected.getIsin(), periodLoaded);
+
+	myChartPanel.redraw(stockLoaded);
+
+	if (stockLoaded.getIntervalIncluded().getStartDate() != null) {
+	    dateDebut.setDate(stockLoaded.getIntervalIncluded().getStartDate().toDate());
+	}
+
+	if (stockLoaded.getIntervalIncluded().getEndDate() != null) {
+	    dateFin.setDate(stockLoaded.getIntervalIncluded().getEndDate().toDate());
+	}
+
+    }
 
     private void createScrollPaneForChart() {
 	scrollPaneForReferenceChart = new JScrollPane(null, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -167,7 +221,7 @@ public class MainFrame extends JFrame implements StockSelectionChangedListener {
 
 	selectValeursBtn = createCenterBtn("Valeurs");
 	selectValeursBtn.addActionListener(new ActionListener() {
-	
+
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		selectStockDialog.setVisible(true);
@@ -195,6 +249,22 @@ public class MainFrame extends JFrame implements StockSelectionChangedListener {
 	dateFin = new JXDatePicker(actualDate.toDate());
 	dateFin.setAlignmentX(Component.CENTER_ALIGNMENT);
 	toolBar.add(dateFin);
+
+	createSperationMoyenne(toolBar);
+
+	// BLOC TWO OPTIONS : FLEXIBLE AND HORIZONTAL LINE ADDING
+	URL resource = MainFrame.class.getResource("/img/toolbar/flexible-line.png");
+	addFlexibleLineBtn = new JButton(new ImageIcon(resource));
+	// setUniqueSizeWorkingDrawBtn(addFlexibleLineBtn);
+	WidgetUtil.setUniqueSize(addFlexibleLineBtn, 35, 35);
+	addFlexibleLineBtn.setAlignmentX((Component.CENTER_ALIGNMENT));
+
+	// JPanel panelBtnsGrouppedOne = new JPanel();
+	// panelBtnsGrouppedOne.add(addFlexibleLineBtn, BorderLayout.WEST);
+	// panelBtnsGrouppedOne.add(addHorizontalLineBtn, BorderLayout.EAST);
+
+	toolBar.add(addFlexibleLineBtn);
+
     }
 
     private void createSperationMoyenne(JToolBar toolBar) {
@@ -255,14 +325,14 @@ public class MainFrame extends JFrame implements StockSelectionChangedListener {
 	    return;
 	}
 
-	MyChartPanel myChartPanel = new MyChartPanel();
+	myChartPanel = new MyChartPanel();
 	myChartPanel.redraw(stockLoaded);
 	dateDebut.setDate(stockLoaded.getIntervalIncluded().getStartDate().toDate());
 
 	scrollPaneForReferenceChart.getViewport().add(myChartPanel);
 
-	if (periodDisplayed.getEndDate() != null) {
-	    dateFin.setDate(periodDisplayed.getEndDate().toDate());
+	if (stockLoaded.getIntervalIncluded().getEndDate() != null) {
+	    dateFin.setDate(stockLoaded.getIntervalIncluded().getEndDate().toDate());
 	}
 
     }
@@ -298,4 +368,21 @@ public class MainFrame extends JFrame implements StockSelectionChangedListener {
 	return dateInterval;
     }
 
+    private void addFlexibleLineAction(JButton addFlexibleLineBtn) {
+	addFlexibleLineAction = new ActionListener() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		removeAllListenersOnChartPanel();
+		myChartPanel.addChartMouseListener(new DrawFlexibleLineChartMouseListener(myChartPanel, myChartPanel.getWorkingDraws()));
+	    }
+
+	};
+	addFlexibleLineBtn.addActionListener(addFlexibleLineAction);
+    }
+
+    private void removeAllListenersOnChartPanel() {
+	myChartPanel.removeAllDrawingListenerOnChartPanel();
+	myChartPanel.clearWorkingDrawInProgress();
+    }
 }

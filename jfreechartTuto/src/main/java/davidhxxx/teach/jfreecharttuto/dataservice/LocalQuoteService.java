@@ -43,7 +43,7 @@ public class LocalQuoteService {
 
     private static Logger LOGGER = LoggerFactory.getLogger(LocalQuoteService.class);
 
-    private  LocalQuoteService() {
+    private LocalQuoteService() {
     }
 
     private static class LazyHolder {
@@ -67,7 +67,7 @@ public class LocalQuoteService {
     }
 
     public void saveQuotationForAllStocks(Map<Stock, QuotationsToImport> quotationsByIsin) {
-	
+
 	for (Entry<Stock, QuotationsToImport> entry : quotationsByIsin.entrySet()) {
 	    Stock stock = entry.getKey();
 	    QuotationsToImport quotations = entry.getValue();
@@ -222,10 +222,17 @@ public class LocalQuoteService {
 	    return null;
 	}
 
-	LocalDate startDateOfList = quotationsLoaded.get(0).getDate();
-	LocalDate endDateOfList = quotationsLoaded.get(quotationsLoaded.size() - 1).getDate();
+	LocalDate startDateEffective = dateInterval.getStartDate();
+	LocalDate endDateEffective = dateInterval.getEndDate();
+	if (quotationsLoaded.get(0).getDate().isAfter(startDateEffective)){
+	    startDateEffective  = quotationsLoaded.get(0).getDate();
+	}
+	if (quotationsLoaded.get(quotationsLoaded.size() - 1).getDate().isBefore(endDateEffective)){
+	    endDateEffective  = quotationsLoaded.get(quotationsLoaded.size() - 1).getDate();
+	}
+	
 
-	DateInterval dateIntervalEffective = new DateInterval(startDateOfList, endDateOfList);
+	DateInterval dateIntervalEffective = new DateInterval(startDateEffective, endDateEffective);
 	OHLCDataItem[] dataForChartPanel = null;
 
 	dataForChartPanel = mapQuotationsToOHLCDataItem(stock.getIsin(), dateIntervalEffective, quotationsLoaded);
@@ -247,17 +254,25 @@ public class LocalQuoteService {
 
     private OHLCDataItem[] mapQuotationsToOHLCDataItem(String isin, DateInterval dateIntervalEffective, List<Quotation> quotationsLoaded) {
 
-	OHLCDataItem[] dataItems = new OHLCDataItem[quotationsLoaded.size()];
+	List<OHLCDataItem> dataItems = new ArrayList<>();
+	
 
 	for (int i = 0; i < quotationsLoaded.size(); i++) {
 
 	    Quotation quotation = quotationsLoaded.get(i);
+	    if (quotation.getDate().isBefore(dateIntervalEffective.getStartDate())) {
+		continue;
+	    }
+	    if (quotation.getDate().isAfter(dateIntervalEffective.getEndDate())) {
+		continue;
+	    }
 	    OHLCDataItem item = new OHLCDataItem(quotation.getDate().toDate(), quotation.getOpen(), quotation.getHigh(), quotation.getLow(),
 		    quotation.getClose(), quotation.getVolume());
-	    dataItems[i] = item;
+	    dataItems.add(item);
 	}
 
-	return dataItems;
+	OHLCDataItem[] dataItemsArray = dataItems.toArray(new OHLCDataItem[dataItems.size()]);
+	return dataItemsArray;
     }
 
     private List<Quotation> loadQuotations(Stock stock, DateInterval period) {

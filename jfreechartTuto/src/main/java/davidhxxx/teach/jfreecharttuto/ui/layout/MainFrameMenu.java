@@ -133,9 +133,13 @@ public class MainFrameMenu extends JMenuBar {
 //		}
 
 		TreeMap<Stock, QuotationsToImport> quotationsByStock = QuotationsConvertorService.getInstance().convertFromMyProviderToQuotations(quoteFileInformations);
-	//	LocalQuoteService.getInstance().saveQuotationForAllStocks(quotationsByStock);
+		LocalQuoteService.getInstance().saveQuotationForAllStocks(quotationsByStock);
 		
-		JOptionPane.showMessageDialog(null, quotationsByStock.size() +  " stocks mis à jour");
+		String stockLabel="stock";
+		if (quotationsByStock.size()>1){
+		    stockLabel="stocks";
+		}
+		JOptionPane.showMessageDialog(null, quotationsByStock.size() +  " "  + stockLabel + " mis à jour");
 		
 
 	    }

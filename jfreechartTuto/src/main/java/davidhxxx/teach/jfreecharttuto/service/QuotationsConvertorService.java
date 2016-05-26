@@ -1,10 +1,12 @@
 package davidhxxx.teach.jfreecharttuto.service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import org.joda.time.DateTime;
@@ -14,6 +16,7 @@ import org.supercsv.cellprocessor.ParseLong;
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvBeanReader;
+import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
 
 import davidhxxx.teach.jfreecharttuto.dataservice.LocalListService;
@@ -39,9 +42,9 @@ public class QuotationsConvertorService {
 
     public TreeMap<Stock, QuotationsToImport> convertFromMyProviderToQuotations(List<QuoteFileInformation> quoteFileInformations) {
 
-	TreeMap<Stock, QuotationsToImport> quotationsByIsin1 = new TreeMap<>();
+	TreeMap<Stock, QuotationsToImport> quotationsByIsin = new TreeMap<>(new StockAlphaNameAscComparator());
 
-	CsvBeanReader mapReader = null;
+	CsvMapReader csvMapReader = null;
 
 	CellProcessor[] processors = null;
 	String[] header = null;
@@ -49,37 +52,45 @@ public class QuotationsConvertorService {
 
 	// my format
 	processors = getMyProviderStockProcessors();
-	header = new String[] { "isin", "date", "open", "high", "low", "close", "volume" };
+	// header = new String[] { "isin", "date", "open", "high", "low", "close", "volume" };
 	csvPreference = ApplicationDirs.getCsvPreference(ApplicationDirs.MY_CVS_PREFERENCE);
 
 	Stock stock = null;
 	for (QuoteFileInformation quoteFileInformation : quoteFileInformations) {
 
 	    File file = new File(quoteFileInformation.getFilePath());
-	    
+
 	    try {
-		mapReader = new CsvBeanReader(new FileReader(file), csvPreference);
+		// csvMapReader = new CsvBeanReader(new FileReader(file), csvPreference);
+		// header = mapReader.getHeader(true);
 
-		Quotation q;
-		while ((q = mapReader.read(Quotation.class, header, processors)) != null) {
+		csvMapReader = new CsvMapReader(new FileReader(file), ApplicationDirs.getCsvPreference(ApplicationDirs.MY_CVS_PREFERENCE));
+		header = csvMapReader.getHeader(true);
 
-		    if (stock == null || (q.getIsin() != null && !q.getIsin().equals(stock.getIsin()))) {
-			stock = LocalListService.getInstance().findStock(q.getIsin());
+		Map<String, Object> quotationMap = null;
+
+		while ((quotationMap = csvMapReader.read(header, processors)) != null) {
+
+		    Quotation.Builder builder = new Quotation.Builder(quotationMap);
+		    Quotation quotation = builder.build();
+
+		    if (stock == null || (quotation.getIsin() != null && !quotation.getIsin().equals(stock.getIsin()))) {
+			stock = LocalListService.getInstance().findStock(quotation.getIsin());
 
 			if (stock == null) {
 			    continue;
 			}
 		    }
-		    QuotationsToImport quotations = quotationsByIsin1.get(stock);
+
+		    QuotationsToImport quotations = quotationsByIsin.get(stock);
 		    if (quotations == null) {
 			quotations = new QuotationsToImport();
-			quotationsByIsin1.put(stock, quotations);
+			quotationsByIsin.put(stock, quotations);
 		    }
 
-		    quotations.addSingleQuotationIfNotDateExit(q);
+		    quotations.addSingleQuotationIfNotDateExit(quotation);
 		}
 	    }
-
 	    catch (Exception e) {
 		String msg = "Erreur lors de la conversion pour le fichier " + file;
 		LOGGER.error(msg, e);
@@ -87,9 +98,9 @@ public class QuotationsConvertorService {
 	    }
 
 	    finally {
-		if (mapReader != null) {
+		if (csvMapReader != null) {
 		    try {
-			mapReader.close();
+			csvMapReader.close();
 		    }
 		    catch (IOException e) {
 			LOGGER.warn("erreur lors de la fermeture du fichier ", e);
@@ -97,10 +108,11 @@ public class QuotationsConvertorService {
 		}
 	    }
 	}
-	TreeMap<Stock, QuotationsToImport> quotationsByIsin = quotationsByIsin1;
+
 
 	LOGGER.debug("convertFileInformationsToQuotationsForSingleValue ends. Nb Isin =" + quotationsByIsin.size());
 	return quotationsByIsin;
+
     }
 
     public CellProcessor[] getMyProviderStockProcessors() {

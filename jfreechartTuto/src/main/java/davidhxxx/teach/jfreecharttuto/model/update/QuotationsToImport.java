@@ -21,7 +21,8 @@ public class QuotationsToImport {
 
 	Map<Integer, TreeSet<Quotation>> quotationsByMonth = quotationsByYearAndMonthSorted.get(year);
 	if (quotationsByMonth == null) {
-	    quotationsByYearAndMonthSorted.put(year, new HashMap<Integer, TreeSet<Quotation>>());
+	    quotationsByMonth = new HashMap<>();
+	    quotationsByYearAndMonthSorted.put(year, quotationsByMonth);
 	}
 
 	TreeSet<Quotation> quotationsForMonth = quotationsByMonth.get(month);
