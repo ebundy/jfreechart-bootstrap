@@ -8,7 +8,6 @@ import java.io.IOException;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -26,52 +25,6 @@ import davidhxxx.teach.jfreecharttuto.model.Stock;
 import davidhxxx.teach.jfreecharttuto.util.ApplicationDirs;
 
 public class LocalListService {
-
-    public enum ListPredefined {
-	SBF120_STOCKS("CAC40", "FR0003999481", Locale.FRENCH);
-
-	private final String fileName;
-	private final String isinIndice;
-	private final Locale locale;
-
-	ListPredefined(String fileName, String isinIndice, Locale locale) {
-	    this.fileName = fileName;
-	    this.isinIndice = isinIndice;
-	    this.locale = locale;
-	}
-
-	public String getFileName() {
-	    return fileName;
-	}
-
-	public String getIsinIndice() {
-	    return isinIndice;
-	}
-
-	public static ListPredefined findByListName(String listFileName) {
-	    for (ListPredefined currentLP : values()) {
-		if (currentLP.fileName.equalsIgnoreCase(listFileName)) {
-		    return currentLP;
-		}
-	    }
-	    return null;
-	}
-
-	public boolean isFrench() {
-	    return locale == Locale.FRENCH;
-	}
-
-	public boolean isUs() {
-	    return locale == Locale.US;
-	}
-
-	public boolean isUk() {
-	    return locale == Locale.UK;
-	}
-
-    }
-
-    public static final String NOT_UPDATABLE_LIST = "not-updatable";
 
     private static final CsvPreference MY_CVS_PREFERENCE = CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE;
 
@@ -163,11 +116,11 @@ public class LocalListService {
 	    String[] headersList = null;
 	    CellProcessor[] processors = null;
 
-	    ListPredefined listPredefined = ListPredefined.findByListName(listName);
-	    if (listPredefined == null) {
-		// throw new IllegalArgumentException("cas non prévu");
-		listPredefined = ListPredefined.SBF120_STOCKS;
-	    }
+	    // ListPredefined listPredefined = ListPredefined.findByListName(listName);
+	    // if (listPredefined == null) {
+	    // // throw new IllegalArgumentException("cas non prévu");
+	    // listPredefined = ListPredefined.SBF120_STOCKS;
+	    // }
 
 	    headersList = headersAvecTicker;
 	    processors = getStockListProcessorsWithTicker();

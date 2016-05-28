@@ -5,13 +5,19 @@
 	<artifactId>JfreechartTuto-final</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
-<!-- test -->
+	<!-- test -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk>1.7</jdk>
 	</properties>
 
 	<build>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+		</testResources>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
