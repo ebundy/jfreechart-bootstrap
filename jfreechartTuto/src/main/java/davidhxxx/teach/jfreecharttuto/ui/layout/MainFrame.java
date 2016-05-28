@@ -85,7 +85,7 @@ public class MainFrame extends JFrame implements StockSelectionChangedListener {
 
 		@Override
 		public void run() {
-		    new MainFrame("mon application de trading");
+		    new MainFrame("trading bootstrap app");
 		}
 
 	    });
