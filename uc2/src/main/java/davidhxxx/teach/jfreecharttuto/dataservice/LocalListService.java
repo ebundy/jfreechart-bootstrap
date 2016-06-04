@@ -21,11 +21,6 @@ public class LocalListService {
 	loadListOfStockListNames();
     }
 
-    private void setListsPath(File path) {
-	this.listsPath = path;
-	listsPath.mkdirs();
-    }
-
     public static LocalListService getInstance() {
 	if (instance == null)
 	    instance = new LocalListService();
@@ -54,4 +49,8 @@ public class LocalListService {
 
     }
 
+    private void setListsPath(File path) {
+	this.listsPath = path;
+	listsPath.mkdirs();
+    }
 }
