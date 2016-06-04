@@ -8,17 +8,7 @@ public class Stock {
 
     private String ticker;
 
-    public String getIsin() {
-	return isin;
-    }
 
-    public String getName() {
-	return name;
-    }
-
-    public String getTicker() {
-	return ticker;
-    }
 
 
 }
