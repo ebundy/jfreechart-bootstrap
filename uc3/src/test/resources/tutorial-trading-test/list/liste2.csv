@@ -1,4 +1,5 @@
 ISIN;name;ticker
+<<<<<<< HEAD
 US88579Y1010;3M Co.;MMM
 US0258161092;American Express Co.;AXP
 US0378331005;Apple Inc.;AAPL
@@ -7,3 +8,5 @@ US1491231015;Caterpillar Inc.;CAT
 US1667641005;Chevron;CVX
 US17275R1023;Cisco Systems Inc.;CSCO
 US1912161007;Coca-Cola Co.;KO
+=======
+>>>>>>> refs/remotes/origin/uc3-branch
