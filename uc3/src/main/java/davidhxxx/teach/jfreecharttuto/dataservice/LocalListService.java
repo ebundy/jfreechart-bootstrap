@@ -63,7 +63,7 @@ public class LocalListService {
 	Map<String, Stock> stocksByIsin = new HashMap<>();
 
 	ICsvMapReader mapReader = null;
-	
+
 	try {
 	    File pathToUse = listsPath;
 
@@ -81,16 +81,7 @@ public class LocalListService {
 
 		String isin = ((String) stockMap.get("isin"));
 		String name = ((String) stockMap.get("name"));
-
-		String ticker = null;
-
-		if (mapReader.length() == 3) {
-		    ticker = ((String) stockMap.get("ticker"));
-		}
-
-		else if (mapReader.length() == 4) {
-		    ticker = ((String) stockMap.get("ticker"));
-		}
+		String ticker = ((String) stockMap.get("ticker"));
 
 		Stock stock = new Stock(isin, name, ticker);
 
