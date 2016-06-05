@@ -15,12 +15,31 @@ public class ListOfStockList {
 
 	for (File filenameWithExtention : filenamesWithExtention) {
 	    String fileNameWithoutExtension = filenameWithExtention.getName().replace(".csv", "");
-	    listOfStockByListName.put(fileNameWithoutExtension, new ListOfStock());
+	    listOfStockByListName.put(fileNameWithoutExtension, null);
 	}
     }
 
     public List<String> getNames() {
 	return new ArrayList<>(listOfStockByListName.keySet());
+    }
+
+    public boolean isStocksLoaded(String listName) {
+	ListOfStock listOfStock = listOfStockByListName.get(listName);
+	if (listOfStock == null)
+	    return false;
+	
+	return true;
+    }
+
+    public List<Stock> getStocksOrderedByNameAsc(String listName) {
+	ListOfStock listOfStock = listOfStockByListName.get(listName);
+	return listOfStock.getStocksOrderByNameAsc();
+    }
+    
+    
+    public void addStocks(String listName, Map<String, Stock> stocksByIsin) {
+	ListOfStock listOfStock = new ListOfStock(stocksByIsin);
+	listOfStockByListName.put(listName, listOfStock);
     }
 
 }

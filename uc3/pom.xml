@@ -95,6 +95,14 @@
 			<version>3.2</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- http://mvnrepository.com/artifact/org.springframework/spring-test -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>4.2.6.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+
 
 	</dependencies>
 

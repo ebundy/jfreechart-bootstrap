@@ -4,10 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import java.util.List;
 import java.util.Locale;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,16 +23,23 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import davidhxxx.teach.jfreecharttuto.dataservice.LocalListService;
+import davidhxxx.teach.jfreecharttuto.model.Stock;
+import davidhxxx.teach.jfreecharttuto.ui.stockselection.StockSelectionChangedListener;
+import davidhxxx.teach.jfreecharttuto.ui.stockselection.StockSelectorDialog;
 import davidhxxx.teach.jfreecharttuto.util.WidgetUtil;
 
 @SuppressWarnings("serial")
-public class Uc2DisplayStockListsMain extends JFrame {
+public class Uc3DisplayStocksFromSelectedListMain extends JFrame implements StockSelectionChangedListener {
 
     // buttons
     private JComboBox<String> comboListOfStockList;
 
+    private JButton selectValeursBtn;
+
     // containers
     private JSplitPane hSplitPaneGeneral;
+
+    private StockSelectorDialog selectStockDialog;
 
     private JToolBar toolBar;
 
@@ -40,13 +50,13 @@ public class Uc2DisplayStockListsMain extends JFrame {
 
 	    @Override
 	    public void run() {
-		new Uc2DisplayStockListsMain("trading bootstrap app");
+		new Uc3DisplayStocksFromSelectedListMain("trading bootstrap app");
 	    }
 
 	});
     }
 
-    public Uc2DisplayStockListsMain(String name) {
+    public Uc3DisplayStocksFromSelectedListMain(String name) {
 
 	super(name);
 	Locale.setDefault(new Locale("fr"));
@@ -61,9 +71,20 @@ public class Uc2DisplayStockListsMain extends JFrame {
 	add(hSplitPaneGeneral, BorderLayout.CENTER);
 
 	initToolBar();
+	selectStockDialog = new StockSelectorDialog(this,  comboListOfStockList.getSelectedItem().toString());
 	hSplitPaneGeneral.setLeftComponent(toolBar);
 	hSplitPaneGeneral.setRightComponent(scrollPaneForReferenceChart);
 	setExtendedState(Frame.MAXIMIZED_BOTH);
+    }
+
+    @Override
+    public void displayNextStock() {
+	selectStockDialog.selectNextStock();
+    }
+
+    @Override
+    public void displayPreviousStock() {
+	selectStockDialog.selectPreviousStock();
     }
 
     private void initToolBar() {
@@ -73,6 +94,17 @@ public class Uc2DisplayStockListsMain extends JFrame {
 	comboListOfStockList = createComboListOfListOfStock();
 	toolBar.add(comboListOfStockList);
 	createSperationMoyenne(toolBar);
+
+	selectValeursBtn = new JButton("Valeurs");
+	WidgetUtil.setUniqueSizeAndCenter(selectValeursBtn, 120, 30);
+	selectValeursBtn.addActionListener(new ActionListener() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		selectStockDialog.setVisible(true);
+	    }
+	});
+	toolBar.add(selectValeursBtn);
     }
 
     private void createSperationMoyenne(JToolBar toolBar) {
@@ -95,7 +127,18 @@ public class Uc2DisplayStockListsMain extends JFrame {
 
 	((JLabel) comboListOfStockList.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
 
+	comboListOfStockList.addActionListener(new ActionListener() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		selectStockDialog.onStockListChanged(comboListOfStockList.getSelectedItem().toString());
+	    }
+	});
 	return comboListOfStockList;
+    }
+
+    @Override
+    public void stockSelectionChanged(Stock selectedStock) {
     }
 
 }
