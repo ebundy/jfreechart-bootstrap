@@ -1,37 +1,6 @@
 package davidhxxx.teach.jfreecharttuto.dataservice;
 
 import java.io.File;
-<<<<<<< HEAD
-import java.io.FilenameFilter;
-
-import java.util.List;
-
-import davidhxxx.teach.jfreecharttuto.model.ListOfStockList;
-import davidhxxx.teach.jfreecharttuto.util.ApplicationDirs;
-
-public class LocalListService {
-
-    private static LocalListService instance;
-
-    private File listsPath;
-
-    private ListOfStockList listOfStockList;
-
-    private LocalListService() {
-	setListsPath(new File(ApplicationDirs.BASE_DIR + "/list"));
-	loadListOfStockListNames();
-    }
-
-    public static LocalListService getInstance() {
-	if (instance == null)
-	    instance = new LocalListService();
-
-	return instance;
-    }
-
-    public List<String> getNamesOfLists() {
-	return listOfStockList.getNames();
-=======
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -146,7 +115,6 @@ public class LocalListService {
     private CellProcessor[] getStockListProcessorsWithTicker() {
 	final CellProcessor[] processors = new CellProcessor[] { new UniqueHashCode(), new NotNull(), new Optional() };
 	return processors;
->>>>>>> refs/remotes/origin/uc3-branch
     }
 
     private void loadListOfStockListNames() {

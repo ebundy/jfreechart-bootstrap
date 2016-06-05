@@ -1,15 +1,5 @@
 package davidhxxx.teach.jfreecharttuto.model;
 
-<<<<<<< HEAD
-public class Stock {
-
-    private String isin;
-
-    private String name;
-
-    private String ticker;
-
-=======
 import java.util.Comparator;
 
 public class Stock {
@@ -70,5 +60,4 @@ public class Stock {
 	
 	return true;
     }
->>>>>>> refs/remotes/origin/uc3-branch
 }

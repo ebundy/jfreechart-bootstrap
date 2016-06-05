@@ -15,14 +15,6 @@ public class ListOfStockList {
 
 	for (File filenameWithExtention : filenamesWithExtention) {
 	    String fileNameWithoutExtension = filenameWithExtention.getName().replace(".csv", "");
-<<<<<<< HEAD
-	    listOfStockByListName.put(fileNameWithoutExtension, new ListOfStock());
-	}
-    }
-
-    public List<String> getNames() {
-	return new ArrayList<>(listOfStockByListName.keySet());
-=======
 	    listOfStockByListName.put(fileNameWithoutExtension, null);
 	}
     }
@@ -48,7 +40,6 @@ public class ListOfStockList {
     public void addStocks(String listName, Map<String, Stock> stocksByIsin) {
 	ListOfStock listOfStock = new ListOfStock(stocksByIsin);
 	listOfStockByListName.put(listName, listOfStock);
->>>>>>> refs/remotes/origin/uc3-branch
     }
 
 }

@@ -1,12 +1,5 @@
 package davidhxxx.teach.jfreecharttuto.model;
 
-<<<<<<< HEAD
-import java.util.List;
-
-public class ListOfStock {
-
-    private List<Stock> stocks;
-=======
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +23,5 @@ public class ListOfStock {
 	}
 	return stocksSorted;
     }
->>>>>>> refs/remotes/origin/uc3-branch
 
 }
