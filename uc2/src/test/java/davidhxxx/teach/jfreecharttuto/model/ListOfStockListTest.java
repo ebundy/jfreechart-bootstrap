@@ -9,14 +9,11 @@ import org.junit.Test;
 import org.unitils.reflectionassert.ReflectionAssert;
 import org.unitils.reflectionassert.ReflectionComparatorMode;
 
-import davidhxxx.teach.jfreecharttuto.model.ListOfStockList;
-import junit.framework.Assert;
-
 public class ListOfStockListTest {
 
     /*
-     * tested:*-
-     * addListNames()
+     * tested:
+     * - addListNames()
      * - getNames()
      * - isStocksLoaded() -> false case
      */

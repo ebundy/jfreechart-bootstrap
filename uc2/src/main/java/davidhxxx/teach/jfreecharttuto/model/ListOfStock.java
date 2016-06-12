@@ -4,6 +4,7 @@ import java.util.List;
 
 public class ListOfStock {
 
+    private String name;
     private List<Stock> stocks;
 
 }
